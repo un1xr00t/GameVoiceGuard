@@ -4,7 +4,8 @@
 
 > **Protect your children from online harassment, cyberbullying, and inappropriate voice communications in games like Fortnite, Roblox, and other multiplayer titles.**
 
-![GameVoiceGuard Banner](banner.png)
+![unnamed-4](https://github.com/user-attachments/assets/c8986313-8a8f-40de-a8af-c8e9242fa955)
+
 
 ---
 

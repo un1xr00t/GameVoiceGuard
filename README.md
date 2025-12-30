@@ -320,6 +320,96 @@ Last run: 2025-01-15T14:30:00
 
 ---
 
+## 🛑 Stopping GameVoiceGuard
+
+### Method 1: Use the Built-in Disable Command (Recommended)
+
+```bash
+sudo python3 voice_blocker_complete.py --disable
+```
+
+This stops bettercap, clears firewall rules, and restores normal network operation.
+
+### Method 2: Manually Stop Processes
+
+If you need to manually stop the running processes:
+
+#### Find Running Processes
+
+```bash
+# Find bettercap PID
+pgrep -x bettercap
+
+# Find voice_blocker PID
+pgrep -f voice_blocker
+
+# See all related processes with details
+ps aux | grep -E "bettercap|voice_blocker"
+```
+
+#### Kill Processes
+
+```bash
+# Kill bettercap
+sudo pkill -x bettercap
+
+# Kill voice_blocker script
+sudo pkill -f voice_blocker
+
+# Or kill by specific PID
+sudo kill 
+
+# Force kill if process won't stop
+sudo kill -9 
+```
+
+#### Clear Firewall Rules
+
+After stopping the processes, clear the firewall rules:
+
+```bash
+# Remove all blocking rules
+sudo pfctl -a voice_blocker -F all
+
+# Verify rules are cleared (should return empty)
+sudo pfctl -a voice_blocker -sr
+```
+
+### Method 3: Full Cleanup Script
+
+Run this to completely stop and clean up GameVoiceGuard:
+
+```bash
+# Stop all processes
+sudo pkill -x bettercap
+sudo pkill -f voice_blocker
+
+# Clear firewall rules
+sudo pfctl -a voice_blocker -F all
+
+# Disable IP forwarding (optional)
+sudo sysctl -w net.inet.ip.forwarding=0
+
+# Verify cleanup
+echo "Processes:"
+ps aux | grep -E "bettercap|voice_blocker" | grep -v grep || echo "  None running"
+echo "Firewall rules:"
+sudo pfctl -a voice_blocker -sr || echo "  None active"
+```
+
+### What Happens When Stopped?
+
+| Component | When Running | When Stopped |
+|-----------|--------------|--------------|
+| Bettercap | Intercepts target traffic | Traffic flows directly to router |
+| Firewall Rules | Blocks voice packets | All packets pass through |
+| Voice Chat | Blocked/broken | Works normally |
+| Gameplay | Works normally | Works normally |
+
+> **Note:** Stopping GameVoiceGuard immediately restores voice chat functionality. The child may need to restart their game for voice to reconnect.
+
+---
+
 ## 🔧 Troubleshooting
 
 ### "Could not find target device"
@@ -352,6 +442,19 @@ Last run: 2025-01-15T14:30:00
 
 - Make sure you specified the correct `--target` IP
 - Rules are device-specific and shouldn't affect others
+
+### Process won't die
+
+If a process refuses to terminate:
+
+```bash
+# Force kill by PID
+sudo kill -9 
+
+# Nuclear option: kill all related processes
+sudo killall -9 bettercap
+sudo killall -9 python3  # Warning: kills ALL Python scripts
+```
 
 ---
 
